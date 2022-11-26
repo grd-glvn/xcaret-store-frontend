@@ -34,7 +34,7 @@ function CarPurchaseDetails( {  editCart } ) {
         if(form === undefined ) return;
         console.log(loan)
         if(editCart) {
-            await axios.put(`http://localhost:3001/api/cart/${car._id}`,{
+            await axios.put(`https://xcaret-store-frontend.herokuapp.com/api/cart/${car._id}`,{
                 car_price: carPrice,
                 selected_currency: currency,
                 model: form.model,
@@ -45,7 +45,7 @@ function CarPurchaseDetails( {  editCart } ) {
             router.push("/")  
             return          
         }
-        await axios.post("http://localhost:3001/api/cart/",{
+        await axios.post("https://xcaret-store-frontend.herokuapp.com/api/cart/",{
             _id: car._id,
             name: car.name,
             maker: car.maker,
@@ -62,7 +62,7 @@ function CarPurchaseDetails( {  editCart } ) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        axios.post("http://localhost:3001/api/cart/",{
+        axios.post("https://xcaret-store-frontend.herokuapp.com/api/cart/",{
             _id: car._id,
             name: car.name,
             maker: car.maker,
