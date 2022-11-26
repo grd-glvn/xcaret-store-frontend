@@ -20,7 +20,7 @@ function payment() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(card)
         };
-        const response = await fetch('http://localhost:3001/api/order/',reqOptions);
+        const response = await fetch('https://xcaret-store-frontend.herokuapp.com/api/order/',reqOptions);
         const data = await response.json();
         console.log(data)
         alert("Pagado!")
