@@ -19,7 +19,7 @@ function Card( { carDetails } ) {
         {/* <img className='' src="some.jpg" alt="" /> */}
         <h2 className='text-2xl font-medium'>{carDetails.name}</h2>
         <h2 className="text-xl">{carDetails.maker}</h2>
-        <h2 className='text-2xl text-right font-bold'>${carPrice}</h2>
+        <h2 className='text-2xl text-right font-bold'>${carPrice.toLocaleString()}</h2>
         <div className='text-center'>
           <button onClick={ handleAddToCart } className='bg-cyan-900 text-cyan-100 text-sm font-bold uppercase rounded hover:bg-cyan-600  py-3 px-3 transition-all duration-800'>Add to Cart</button>
         </div>

@@ -8,7 +8,7 @@ function Cart( ) {
   useEffect( () => {
     async function getCartItems() {
       try {
-        const response = await axios.get('http://localhost:3001/api/cart/');
+        const response = await axios.get('https://xcaret-store-backend.herokuapp.com/api/cart/');
         console.log(response.data)
         setCartItems(response.data.data);
         return 
@@ -24,7 +24,7 @@ function Cart( ) {
   }, [cartListIsOpen, refetch])
 
   async function removeItem(_id) {
-    await axios.delete(`http://localhost:3001/api/cart/${_id}`)
+    await axios.delete(`https://xcaret-store-backend.herokuapp.com/api/cart/${_id}`)
     setRefetch(!refetch)
   }
   

@@ -56,7 +56,7 @@ export default function Home( {carsData} ) {
 }
 
 export async function getServerSideProps(context) {
-  const req = await fetch(`http://localhost:3001/api/`);
+  const req = await fetch(`https://xcaret-store-backend.herokuapp.com/api/`);
   const { data:carsData } = await req.json();
   console.log(carsData)
   return {
