@@ -5,15 +5,18 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { uiActions } from '../store/slices/uiSlice'
+import {API} from '../utils/api'
 
 export default function Home( {carsData} ) {
   const dispatch = useDispatch();
   const lang = useSelector( state => state.ui.language )
   const uiLang = useSelector( state => state.ui.uiLang )
   const ui = uiLang[lang]; 
+
   useEffect(() => {
     async function getLang() {
-      const res = await axios.get("http://localhost:3001/api/lang/");
+      // const res = await axios.get("http://localhost:3001/api/lang/");
+      const res = await axios.get(`${API}/api/lang/`);
       const langData = res.data.data;
       dispatch(uiActions.setUiLang(langData))
     }
@@ -69,8 +72,7 @@ export default function Home( {carsData} ) {
 }
 
 export async function getServerSideProps(context) {
-
-    const API = 'https://xcaret-store-backend-production.up.railway.app/';
+  console.log(API)
     let res = await fetch(`https://xcaret-store-backend-production.up.railway.app/api/`);
     const { data:carsData } = await res.json();
 

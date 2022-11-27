@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import CartItems from '../components/CartItems';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-const API = 'https://xcaret-store-backend-production.up.railway.app'
+// const API = 'https://xcaret-store-backend-production.up.railway.app'
+import API from '../utils/api'
 
 function payment() {
     const router = useRouter();
@@ -107,7 +108,7 @@ function payment() {
                     <button 
                         type='button'
                         onClick={()=>router.push("/")}
-                        className='bg-red-100 text-white text-sm font-light rounded hover:bg-red-400 transition-all duration-500 py-1 px-2'>
+                        className='bg-red-300 text-white text-sm font-light rounded hover:bg-red-400 transition-all duration-500 py-1 px-2'>
                         {ui.order.button[1]}
                     </button>
 
