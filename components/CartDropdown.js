@@ -1,13 +1,19 @@
 import { useState } from "react";
 import CartItems from "./CartItems";
+import {useSelector} from "react-redux"
 
 function CartDropdown( ) {
-    const [showDropdown, setShowDropdown] = useState(false);
+  const lang = useSelector( state => state.ui.language )
+  const uiLang = useSelector( state => state.ui.uiLang )
+  const ui = uiLang[lang]; 
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  if(ui === undefined) return null;
 
   return (
     <div className="relative text-center">
         <button className="relative block z-10 px-5 py-1 hover:bg-white rounded transition-all duration-600" onClick={()=> setShowDropdown(!showDropdown)}>
-            <p className="">Cart</p>
+            <p className="">{ui.navbar.button}</p>
         </button>
         { showDropdown &&
         <>

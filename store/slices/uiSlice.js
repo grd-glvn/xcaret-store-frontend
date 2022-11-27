@@ -4,6 +4,7 @@ const uiSlice = createSlice({
     name: "ui",
     initialState:{
         language: "es",
+        uiLang: {},
         currency: "mxn",
         selectedItem: {},
         cartListIsOpen: false,
@@ -13,6 +14,9 @@ const uiSlice = createSlice({
     reducers:{
         toggleLanguage: (state) => {
             state.language = state.language === "es" ? "en" : "es";
+        },
+        setUiLang: (state, action) => {
+            state.uiLang = action.payload;
         },
         toggleCurrency: (state) => {
             state.currency = state.currency === "mxn" ? "usd" : "mxn";

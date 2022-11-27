@@ -7,6 +7,9 @@ import { useRouter } from 'next/router'
 const API = 'https://xcaret-store-backend-production.up.railway.app';
 
 function CartItems({onCheckout}) {
+    const lang = useSelector( state => state.ui.language )
+    const uiLang = useSelector( state => state.ui.uiLang )
+    const ui = uiLang[lang]; 
     const cartListIsOpen = useSelector( state => state.ui.cartListIsOpen )
     const [cartItems, setCartItems] = useState([]);
     const [refetch, setRefetch] = useState(false);
@@ -38,15 +41,17 @@ function CartItems({onCheckout}) {
       await axios.delete(`${API}/api/cart/`)
       setRefetch(!refetch)
     }
+
+    if(ui=== undefined) return null;
   return (
     <div>
       {cartItems.length ===0 ? 
         <li className="hover:bg-neutral-200 opacity-100">
             <p className="text-xl font-bold text-zinc-400">
-                No items found
+                {ui.cart.p_emptycart}
             </p>
             <p className="text">
-                Add some items to your cart
+            {ui.cart.p_emptycartsub}
             </p>
         </li>            
     :
@@ -67,12 +72,12 @@ function CartItems({onCheckout}) {
                         router.push("/editcart")
                         } }
                         className='bg-neutral-300 w-full text-white uppercase rounded hover:bg-slate-800 px-3 transition-all'>
-                        Edit
+                        {ui.cart.button[0]}
                     </button>
                     <button 
                         onClick={ () => removeItem(car._id) } 
                         className='bg-red-100 text-white uppercase rounded hover:bg-red-400 px-3 transition-all'>
-                        Delete
+                        {ui.cart.button[1]}
                     </button>
                 </div>
             </li>
@@ -82,7 +87,7 @@ function CartItems({onCheckout}) {
     
         }
         
-        <p>Grand total: </p>
+        <p>{ui.cart.total}</p>
         <p className="text-4xl font-light">${cartItems.reduce((accum,car) => accum + car.subtotal,0).toLocaleString()}
         </p>
 
@@ -92,12 +97,12 @@ function CartItems({onCheckout}) {
               <button 
                   onClick={() => router.push("/payment")}
                   className='bg-black text-white uppercase w-full hover:bg-neutral-600 py-3 mt-5 transition-all'>
-                  Proceed to checkout
+                  {ui.cart.btn_checkout}
               </button>
               <button
                   onClick={removeAllItems} 
                   className='bg-neutral-400 text-xs text-white uppercase w-full hover:bg-red-300 py-3 mt-5 transition-all'>
-                  Empty cart
+                  {ui.cart.btn_empty}
               </button>
               </>
         }

@@ -9,11 +9,15 @@ const API = 'https://xcaret-store-backend-production.up.railway.app';
 function CarPurchaseDetails( {  editCart } ) {
     const car = useSelector( state => state.ui.selectedItem );
     if (car === undefined) return null
+    const lang = useSelector( state => state.ui.language )
+    const uiLang = useSelector( state => state.ui.uiLang )
+    const ui = uiLang[lang]; 
     const [form, setForm] = useState(undefined);
     const currency = useSelector( state => state.ui.currency );
     const [carPrice, setCarPrice] = useState(currency === 'mxn' ? car.price_mxn : car.price_usd);
     const [loan, setLoan] = useState({downpayment:0.4*carPrice});
     const [term, setTerm] = useState(12);
+    const [error, setError] = useState('');
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -86,7 +90,7 @@ function CarPurchaseDetails( {  editCart } ) {
 
         try{
             if(editCart) {
-                await axios.put(`${API}/api/cart/${car._id}`,{
+                const response = await axios.put(`${API}/api/cart/${car._id}`,{
                     car_price: carPrice,
                     selected_currency: currency,
                     model: form.model,
@@ -94,6 +98,7 @@ function CarPurchaseDetails( {  editCart } ) {
                     subtotal: form.method === 'cash' ? carPrice : loan.downpayment, 
                     // loan: loan,
                 })
+                
                 router.push("/")  
                 return          
             }
@@ -109,32 +114,52 @@ function CarPurchaseDetails( {  editCart } ) {
                 loan: loan,
                 subtotal: form.method === 'cash' ? carPrice : loan.downpayment,
             })
-                router.push("/")
+            router.push("/")
 
         } catch (e) {
-            
-            console.log(e)
+            if( e.response?.data.error?.includes("E11000") ) {
+                setError('This item is already in your cart')
+            }
         }
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-        axios.post("${API}/api/cart/",{
-            _id: car._id,
-            name: car.name,
-            maker: car.maker,
-            car_price: carPrice,
-            price_mxn: car.price_mxn,
-            price_usd: car.price_usd,
-            selected_currency: currency,
-            model: form?.model,
-            loan: loan,
-            subtotal: form.method === 'cash' ? carPrice : loan.downpayment,
-        })
-        setForm(undefined)
-        setLoan(undefined)
+        try {
+            if(editCart) {
+                await axios.put(`${API}/api/cart/${car._id}`,{
+                    car_price: carPrice,
+                    selected_currency: currency,
+                    model: form.model,
+                    loan: form.method ==='cash'? {} : loan,
+                    subtotal: form.method === 'cash' ? carPrice : loan.downpayment, 
+                    // loan: loan,
+                })
+                
+                router.push("/payment")  
+                return          
+            }
+            await axios.post(`${API}/api/cart/`,{
+                _id: car._id,
+                name: car.name,
+                maker: car.maker,
+                car_price: carPrice,
+                price_mxn: car.price_mxn,
+                price_usd: car.price_usd,
+                selected_currency: currency,
+                model: form?.model,
+                loan: loan,
+                subtotal: form.method === 'cash' ? carPrice : loan.downpayment,
+            })
+            setForm(undefined)
+            setLoan(undefined)
+            router.push('/payment')
+        } catch (e){
+            if( e.response?.data.error?.includes("E11000") ) {
+                setError('This item is already in your cart')
+            }
+        }
 
-        router.push('/payment')
     }
     
     function handleForm(e) {
@@ -143,27 +168,25 @@ function CarPurchaseDetails( {  editCart } ) {
         })
 
     }
-
+    if (ui === undefined) return null;
     return (
         <div className='flex flex-col items-center gap-5  mt-20 sm:mt-10 justify-center'>
-            <h1 className='text-5xl font-light text-neutral-400  sm:ml-48 sm:mt-10 sm:self-start'>{editCart && 'Edit ' }Finance Options</h1>
+            <h1 className='text-5xl font-light text-neutral-400  sm:ml-48 sm:mt-10 sm:self-start'>{editCart ? ui.form.header[1] : ui.form.header[0] }</h1>
             <h2 className='text-5xl font-bold'>{car.name}</h2>
             <h2 className='text-4xl font-medium'>{car.maker}</h2>
             <form className='flex flex-col gap-5 items-center' onSubmit={ e => handleSubmit(e) } >
                 <div onChange={ e => handleForm(e)  } >
-                    {car.models?.length > 0 && <h3 className='font-light'>Available models</h3>}    
+                    {car.models?.length > 0 && <h3 className='font-light'>{ui.form.p[0]}</h3>}    
                     <div className="flex flex-col">
                         {car.models?.map( model => {
                             return(
                                 <>
-                            <div className="flex items-center justify-center bg-neutral-200 rounded-md h-10 mb-3">
+                            <div key={model} className="flex items-center justify-center bg-neutral-200 rounded-md h-10 mb-3">
                                 <div className="flex items-center">
-                                    {/* <input className="w-5 h-5" id="cash" type="radio" value="cash"  name="method"  /> */}
                                     <input className="w-5 h-5" type="radio" value={model} id={model} name="model"  />
                                 </div>
                                 <div className="">
-                                    {/* <label for="cash" className="w-full h-full text-xl text-center font-medium cursor-pointer ">Cash</label> */}
-                                    <label className="w-full h-full text-xl text-center font-medium cursor-pointer " for={model}>{model}</label>
+                                    <label className="w-full h-full text-xl text-center font-medium cursor-pointer " htmlFor={model}>{model}</label>
                                 </div>
                             </div>
                                     
@@ -174,7 +197,7 @@ function CarPurchaseDetails( {  editCart } ) {
                     </div>
                 </div> 
 
-                <h3 className='font-light'>Available finance options:</h3>
+                <h3 className='font-light'>{ui.form.p[1]}</h3>
                 <div onChange={ e => handleForm(e)  } >
                     <div className="flex flex-col">
                         <div className="flex items-center justify-center bg-neutral-200 rounded-md h-10">
@@ -182,7 +205,9 @@ function CarPurchaseDetails( {  editCart } ) {
                                 <input className="w-5 h-5" id="cash" type="radio" value="cash"  name="method"  />
                             </div>
                             <div className="">
-                                <label for="cash" className="w-full h-full text-xl text-center font-medium cursor-pointer ">Cash</label>
+                                <label for="cash" className="w-full h-full text-xl text-center font-medium cursor-pointer ">
+                                    {ui.form.radio[0]}
+                                </label>
                             </div>
                         </div>
                         <div className="flex items-center justify-center bg-neutral-200 rounded-md mt-3 h-10 w-20">
@@ -190,7 +215,9 @@ function CarPurchaseDetails( {  editCart } ) {
                                 <input className="w-5 h-5" id="loan" type="radio" value="loan"  name="method" />
                             </div>
                             <div className="">
-                                <label for="loan" className="w-full h-full text-xl text-center font-medium cursor-pointer">Loan</label>
+                                <label for="loan" className="w-full h-full text-xl text-center font-medium cursor-pointer">
+                                {ui.form.radio[1]}
+                                </label>
                             </div>
                             
                         </div>
@@ -219,21 +246,22 @@ function CarPurchaseDetails( {  editCart } ) {
                     <p className='font-light text-3xl'>${carPrice.toLocaleString()}</p>
                     </>
                 }
+                {error && <p className='bg-red-100 rounded-md p-6 text-red-500'>{error}</p>}
                 <div className="flex flex-row gap-5">
                     <button 
                     type="button" 
                     className='bg-red-200 text-white rounded hover:bg-red-400 py-3 px-3 transition-all duration-500' onClick={()=>router.push("/")}>
-                        Cancelar
+                        {ui.form.btn_cancel}
                     </button>
                     <button 
                     type="button" 
                     className='bg-cyan-500 text-white rounded hover:bg-cyan-800 py-3 px-3' onClick={handleContinueShopping}>
-                        {editCart ? "Editar y continuar comprando" : "Agregar y continuar comprando"}
+                        {editCart ? ui.form.btn_edit : ui.form.btn_add }
                     </button>
                     <button 
                     type="submit" 
                     className='bg-cyan-500 text-white rounded hover:bg-cyan-800 py-3 px-3'>
-                        Proceder a pago
+                        {ui.form.btn_checkout}
                     </button>
                 </div>
             </form>

@@ -2,11 +2,15 @@ import {useState} from 'react'
 import { useRouter } from 'next/router'
 import CartItems from '../components/CartItems';
 import axios from 'axios';
-
+import { useSelector } from 'react-redux';
 const API = 'https://xcaret-store-backend-production.up.railway.app'
 
 function payment() {
     const router = useRouter();
+    const lang = useSelector( state => state.ui.language )
+    const uiLang = useSelector( state => state.ui.uiLang )
+    const ui = uiLang[lang]; 
+
     const [error, setError] = useState({
         frontend: "",
         backend: "",
@@ -51,39 +55,41 @@ function payment() {
 
     }
 
-
+    if(ui=== undefined) return null;
   return (
     <div className="">
 
         <div className="flex flex-col sm:justify-evenly w-full">
-            <h1 className="text-5xl font-extralight text-neutral-400 self-center sm:self-start sm:ml-72 mt-10 mb-6">Order details</h1>
+            <h1 className="text-5xl font-extralight text-neutral-400 self-center sm:self-start sm:ml-72 mt-10 mb-6">
+                {ui.order.header}
+            </h1>
         </div>
         <div className="text-center mx-[30%]">
             <CartItems onCheckout={true}/>
         </div>
     
       <div className="flex flex-col items-center justify-center bg-neutral-100 py-10 ">
-        <h1>Payment information</h1>
+        <h1>{ui.order.payinfo}</h1>
         { error.frontend && <p className='bg-red-100 rounded-md p-6'>{error.frontend}</p>}
         { error.backend && <p className='bg-red-100 rounded-md p-6'>{error.backend}</p>}
         <form className="flex flex-col sm:flex-row w-[100vw] gap-3 items-center justify-center" onSubmit={handlePayment}>
             <div className="flex flex-col flex-wrap gap-1 justify-center mt-10 px-10" onChange={handleCard}>
-                    <p className='text-sm'>Card number</p>
+                    <p className='text-sm'>{ui.order.card[0]}</p>
                     <input
                         name="card_number" className="border rounded h-10 text-lg" placeholder="5152 1234 5678 9123" type='text'
                         onClick={ e => handleCard(e)}
                     />
-                    <p className='text-sm'>Name on the card</p>
+                    <p className='text-sm'>{ui.order.card[1]}</p>
                     <input
                         name="card_name" className="border rounded h-10 text-lg" placeholder="Name" type='text'
                         onClick={ e => handleCard(e)}
                     />
-                    <p className='text-sm'>Expiry date</p>
+                    <p className='text-sm'>{ui.order.card[2]}</p>
                     <input
                         name="card_date" className="border rounded h-10 text-lg" placeholder="MM/YY" type='text'
                         onClick={ e => handleCard(e)}
                     />
-                    <p className='text-sm'>CVV</p>
+                    <p className='text-sm'>{ui.order.card[3]}</p>
                     <input
                         name="card_cvv" className="border rounded h-10 text-lg" placeholder="000" type='text'
                         onClick={ e => handleCard(e)}
@@ -92,20 +98,17 @@ function payment() {
             </div>
             <div className="flex flex-col flex-wrap items-center gap-5 mb-10">
                 <div className="">
-                    {/* <p className="text-right1">Total amount</p> */}
-                    {/* <p className="text-right4 text-4xl">$5000</p> */}
                 </div>
-
                     <button 
                         type='submit'
                         className='bg-cyan-500 font-bold text-white uppercase rounded hover:bg-cyan-800 transition-all duration-500 py-3 px-3 mt-10'>
-                        Place order
+                        {ui.order.button[0]}
                     </button>
                     <button 
                         type='button'
                         onClick={()=>router.push("/")}
                         className='bg-red-100 text-white text-sm font-light rounded hover:bg-red-400 transition-all duration-500 py-1 px-2'>
-                        Go back
+                        {ui.order.button[1]}
                     </button>
 
 
