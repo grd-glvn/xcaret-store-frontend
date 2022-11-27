@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { uiActions } from "../store/slices/uiSlice";
 import { useRouter } from 'next/router'
 
+const API = 'https://xcaret-store-backend-production.up.railway.app';
 
 function CartItems({onCheckout}) {
     const cartListIsOpen = useSelector( state => state.ui.cartListIsOpen )
@@ -15,7 +16,7 @@ function CartItems({onCheckout}) {
     useEffect( () => {
       async function getCartItems() {
         try {
-          const response = await axios.get('https://xcaret-store-backend.herokuapp.com/api/cart/');
+          const response = await axios.get(`${API}/api/cart/`);
           setCartItems(response.data.data);
           return 
         } catch (e) {
@@ -30,11 +31,11 @@ function CartItems({onCheckout}) {
     }, [cartListIsOpen, refetch])
   
     async function removeItem(_id) {
-      await axios.delete(`https://xcaret-store-backend.herokuapp.com/api/cart/${_id}`)
+      await axios.delete(`${API}/api/cart/${_id}`)
       setRefetch(!refetch)
     }
     async function removeAllItems() {
-      await axios.delete(`https://xcaret-store-backend.herokuapp.com/api/cart/`)
+      await axios.delete(`${API}/api/cart/`)
       setRefetch(!refetch)
     }
   return (

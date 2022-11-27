@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import Card from '../components/Card'
-import { useSelector, useDispatch } from 'react-redux'
 import Navbar from '../components/Navbar'
+
+
 
 export default function Home( {carsData} ) {
 
@@ -50,9 +51,10 @@ export default function Home( {carsData} ) {
 }
 
 export async function getServerSideProps(context) {
-  const req = await fetch(`https://xcaret-store-backend.herokuapp.com/api/`);
+  const API = 'https://xcaret-store-backend-production.up.railway.app/';
+  const req = await fetch(`https://xcaret-store-backend-production.up.railway.app/api/`);
   const { data:carsData } = await req.json();
-  console.log(carsData)
+
   return {
     props: {carsData},
   }

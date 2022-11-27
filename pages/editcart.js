@@ -1,10 +1,9 @@
 import Head from 'next/head'
 
 import PurchaseForm from '../components/PurchaseForm'
-import { useState } from 'react'
+
 import { useSelector, useDispatch } from 'react-redux'
-import { uiActions } from '../store/slices/uiSlice'
-import Cart from '../components/Cart'
+
 import Navbar from '../components/Navbar'
 
 export default function EditCart( {carsData} ) {

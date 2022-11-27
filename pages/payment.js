@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import CartItems from '../components/CartItems';
 import axios from 'axios';
 
+const API = 'https://xcaret-store-backend-production.up.railway.app'
+
 function payment() {
     const router = useRouter();
     const [error, setError] = useState({
@@ -18,7 +20,7 @@ function payment() {
     }
 
     async function removeAllItems() {
-        await axios.delete(`https://xcaret-store-backend.herokuapp.com/api/cart/`)
+        await axios.delete(`${API}/api/cart/`)
     }
 
     async function handlePayment(e) {
@@ -27,7 +29,7 @@ function payment() {
             if(card === undefined ) {
                 throw new Error("Missing card details, please fill all fields ")
             }
-            const response = await axios.post('http://localhost:3001/api/order/', {
+            const response = await axios.post(`${API}/api/order/`, {
                 card_name: card.card_name,
                 card_number: card.card_number,
                 card_cvv: card.card_cvv,

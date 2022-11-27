@@ -4,6 +4,8 @@ import { uiActions } from '../store/slices/uiSlice';
 import { useRouter } from 'next/router'
 import axios from "axios"
 
+const API = 'https://xcaret-store-backend-production.up.railway.app';
+
 function CarPurchaseDetails( {  editCart } ) {
     const car = useSelector( state => state.ui.selectedItem );
     if (car === undefined) return null
@@ -81,37 +83,43 @@ function CarPurchaseDetails( {  editCart } ) {
     async function handleContinueShopping() {
 
         if(form === undefined ) return;
-        console.log(loan)
-        if(editCart) {
-            await axios.put(`https://xcaret-store-backend.herokuapp.com/api/cart/${car._id}`,{
+
+        try{
+            if(editCart) {
+                await axios.put(`${API}/api/cart/${car._id}`,{
+                    car_price: carPrice,
+                    selected_currency: currency,
+                    model: form.model,
+                    loan: form.method ==='cash'? {} : loan,
+                    subtotal: form.method === 'cash' ? carPrice : loan.downpayment, 
+                    // loan: loan,
+                })
+                router.push("/")  
+                return          
+            }
+            const response = await axios.post(`${API}/api/cart/`,{
+                _id: car._id,
+                name: car.name,
+                maker: car.maker,
                 car_price: carPrice,
+                price_mxn: car.price_mxn,
+                price_usd: car.price_usd,
                 selected_currency: currency,
                 model: form.model,
-                loan: form.method ==='cash'? {} : loan,
-                subtotal: form.method === 'cash' ? carPrice : loan.downpayment, 
-                // loan: loan,
+                loan: loan,
+                subtotal: form.method === 'cash' ? carPrice : loan.downpayment,
             })
-            router.push("/")  
-            return          
+                router.push("/")
+
+        } catch (e) {
+            
+            console.log(e)
         }
-        await axios.post("https://xcaret-store-backend.herokuapp.com/api/cart/",{
-            _id: car._id,
-            name: car.name,
-            maker: car.maker,
-            car_price: carPrice,
-            price_mxn: car.price_mxn,
-            price_usd: car.price_usd,
-            selected_currency: currency,
-            model: form.model,
-            loan: loan,
-            subtotal: form.method === 'cash' ? carPrice : loan.downpayment,
-        })
-        router.push("/")
     }
 
     function handleSubmit(e) {
         e.preventDefault();
-        axios.post("https://xcaret-store-backend.herokuapp.com/api/cart/",{
+        axios.post("${API}/api/cart/",{
             _id: car._id,
             name: car.name,
             maker: car.maker,
