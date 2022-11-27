@@ -1,6 +1,6 @@
 ## Frontend
 
-Correr app en modo desarrollo
+Situarse en raíz de frontend y ejecutar comando
 
 ```bash
 npm run dev
