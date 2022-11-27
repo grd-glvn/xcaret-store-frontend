@@ -5,7 +5,6 @@ const uiSlice = createSlice({
     initialState:{
         language: "es",
         currency: "mxn",
-        modalIsOpen: false,
         selectedItem: {},
         cartListIsOpen: false,
         cartItems: [],
@@ -20,9 +19,6 @@ const uiSlice = createSlice({
         },
         setCartItems: (state, action) => {
             state.cartItems = [...state.cartItems, action.payload];
-        },
-        toggleCarModal: (state) => {
-            state.modalIsOpen = !state.modalIsOpen;
         },
         selectItem: (state, action) => {
             state.selectedItem = action.payload;

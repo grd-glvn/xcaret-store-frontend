@@ -1,17 +1,11 @@
 import Head from 'next/head'
 import Card from '../components/Card'
 import { useSelector, useDispatch } from 'react-redux'
-import Cart from '../components/Cart'
 import Navbar from '../components/Navbar'
-import { uiActions } from '../store/slices/uiSlice'
-import CartDropdown from '../components/CartDropdown'
 
 export default function Home( {carsData} ) {
-  const currency = useSelector( state => state.ui.currency );
-  const cartListIsOpen = useSelector( state => state.ui.cartListIsOpen )
-  const dispatch = useDispatch();
-  if( carsData === undefined ) return <div>Loading...</div>
 
+  if( carsData === undefined ) return <div>Loading...</div>
 
   return (
     <div>
