@@ -16,7 +16,7 @@ export default function Home( {carsData} ) {
   useEffect(() => {
     async function getLang() {
       // const res = await axios.get("http://localhost:3001/api/lang/");
-      const res = await axios.get(`${API}/api/lang/`);
+      const res = await axios.get(`https://xcaret-store-backend-production.up.railway.app/api/lang/`);
       const langData = res.data.data;
       dispatch(uiActions.setUiLang(langData))
     }
