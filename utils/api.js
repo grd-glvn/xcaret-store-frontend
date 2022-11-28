@@ -1,1 +1,1 @@
-export const API = 'http://localhost:3001'
+export const API = 'https://xcaret-store-backend-production.up.railway.app';
